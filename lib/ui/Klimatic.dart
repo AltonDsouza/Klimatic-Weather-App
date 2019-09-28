@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../util/utils.dart';
@@ -26,7 +27,7 @@ class _KlimaticState extends State<Klimatic> {
     );
 
     if(result!=null && result.containsKey("enter")){
-//      print(result['enter'].toString());
+//      print("Look here "+result['enter'].toString());
       cityEntered = result['enter'].toString();
     }
   }
@@ -82,13 +83,7 @@ class _KlimaticState extends State<Klimatic> {
             child: Image.asset('images/light_rain.png'),
           ),
 
-
-          //Container with Weather data
-          Container(
-//            alignment: Alignment.center,
-            margin: const EdgeInsets.fromLTRB(30.0, 300.0, 0.0, 0.0),
-            child: updateTempWidget("${cityEntered == null ? defaultCity : cityEntered}"),
-          ),
+          updateTempWidget("${cityEntered == null ? defaultCity : cityEntered}")
 
         ],
       ),
@@ -113,12 +108,24 @@ class _KlimaticState extends State<Klimatic> {
             Map content = snapshot.data;
             print(city);
             return new Container(
+              margin: const EdgeInsets.fromLTRB(30.0, 250.0, 0.0, 0.0),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   ListTile(
                     title: Text(content['main']['temp'].toString(),
                     style: tempStyle(),),
-                  )
+
+                    subtitle: ListTile(
+                      title: Text(
+                          "Humidity: ${content['main']['humidity'].toString()}\n"
+                          "Min: ${content['main']['temp_min'].toString()}\n"
+                          "Max: ${content['main']['temp_max'].toString()}",
+
+                      style: extraTemp(),),
+                    ),
+                  ),
+
                 ],
               ),
             );
@@ -188,7 +195,7 @@ class ChangeCity extends StatelessWidget {
                   onPressed: (){
                     Navigator.pop(context,
                     {
-                      'enter':_cityFieldController.text
+                      'enter':_cityFieldController.text == "" ? defaultCity : _cityFieldController.text
                     });
                   },
                   child: Text(
@@ -220,6 +227,14 @@ TextStyle tempStyle(){
 }
 
 
+TextStyle extraTemp(){
+  return TextStyle(
+      color: Colors.white,
+      fontStyle: FontStyle.normal,
+      fontWeight: FontWeight.w500,
+      fontSize: 17.0
+  );
+}
 
 TextStyle cityStyle(){
   return TextStyle(
